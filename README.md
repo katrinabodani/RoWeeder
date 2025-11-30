@@ -2,7 +2,7 @@
 
 **Computer Vision Course Project - Fall - 2025**
 
-This project reproduces and extends the RoWeeder framework for unsupervised weed mapping. We implement the original RoWeeder method and explore cross-domain transfer learning using the Agriculture-Vision dataset. Below is the original architecture diaram
+This project reproduces and extends the RoWeeder framework for unsupervised weed mapping. We implement the original RoWeeder method and explore cross-domain transfer learning using the Agriculture-Vision dataset. Below is the original architecture diagram.
 
 ![RoWeeder Framework](res/method.svg)
 
@@ -66,9 +66,9 @@ CV_project/
 
 ---
 
-## 📊 Dataset Preparation
+## Dataset Preparation
 
-### WeedMap Dataset
+### Reproduction on RedEdge Dataset
 
 Download and preprocess the WeedMap dataset:
 
@@ -101,21 +101,26 @@ Download from [Agriculture-Vision Challenge](https://www.agriculture-vision.com/
 
 ---
 
-## 🚀 Training
+## Training
 
-### Phase 1: Agriculture-Vision Fine-tuning
+### Agriculture-Vision Fine-tuning
 
 Train on Agriculture-Vision dataset (7 classes with RGB+NIR):
 
 ```bash
-python train_improved.py \
+python train_agriculture_vision.py \
   --config parameters/finetuning/agriculture_vision.yaml \
   --epochs 30 \
   --batch-size 16
 ```
 
+```bash
+python test_finetuned_av.py
+python test_finetuned_weedmap.py
+```
+
 **Results:**
-- Validation F1: 67.0%
+- Test F1 on Agriculture Vision: 67.0%
 - Test F1 on WeedMap: 65.2% (after 7→3 class mapping)
 
 ### Phase 2: RoWeeder Reproduction
