@@ -138,7 +138,7 @@ python main.py experiment --parameters=parameters/folds/flat.yaml
 
 ### Test on Agriculture Vision Test Set
 
-Test any model on the WeedMap test set:
+Test any model on the Agriculture Vision test set:
 
 ```bash
 # Test reproduced model
