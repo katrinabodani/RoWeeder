@@ -2,31 +2,31 @@
 
 **Computer Vision Course Project - Fall - 2025**
 
-This project reproduces and extends the RoWeeder framework for unsupervised weed mapping. We implement the original RoWeeder method and explore cross-domain transfer learning using the Agriculture-Vision dataset.
+This project reproduces and extends the RoWeeder framework for unsupervised weed mapping. We implement the original RoWeeder method and explore cross-domain transfer learning using the Agriculture-Vision dataset. Below is the original architecture diaram
 
 ![RoWeeder Framework](res/method.svg)
 
 ---
 
-## 📋 Project Overview
+## Project Overview
 
 ### What We Accomplished
 
-1. **✅ Reproduced RoWeeder Training** - Successfully trained RoWeeder from scratch on WeedMap pseudo-labels
-2. **✅ Cross-Domain Fine-tuning** - Trained on Agriculture-Vision (7 classes, RGB+NIR) and tested generalization to WeedMap
-3. **✅ Comprehensive Evaluation** - Tested all models on WeedMap test set with detailed metrics
-4. **✅ Web Application** - Built interactive Gradio app for real-time weed segmentation
+1. **Reproduced RoWeeder Training** - Successfully trained RoWeeder from scratch on WeedMap pseudo-labels
+2. **Cross-Domain Fine-tuning** - Trained on Agriculture-Vision (7 classes, RGB+NIR) and tested generalization to WeedMap
+3. **Comprehensive Evaluation** - Tested all models on WeedMap test set with detailed metrics
+4. **Web Application** - Built interactive Gradio app for real-time weed segmentation
 
 ### Key Results
 
-| Model | F1 Score | Training Dataset |
+| Model | F1 Score on WeedMap | Training Dataset |
 |-------|------------------|------------------|
 | **Baseline RoWeeder** | 37.5% | HuggingFace pretrained |
 | **Phase 1 Finetuned** | 65.2% | Agriculture-Vision (7 classes) |
 | **Reproduced RoWeeder** | 42.5% | WeedMap pseudo-labels |
 ---
 
-## 🛠️ Installation
+## Installation
 
 ### Environment Setup
 
@@ -46,17 +46,22 @@ pip install safetensors
 ### Project Structure
 
 ```
-RoWeeder/
-├── dataset/
-│   ├── patches/512/          # Training patches
-│   ├── test/Rededge/         # WeedMap test set
-│   └── generated/            # Pseudo-labels
-├── models/
-│   ├── phase1_finetuned/     # Agriculture-Vision model
-│   └── reproduced_roweeder/  # Our trained model
-├── weedmap-inference/        # Gradio web app
-├── parameters/               # Training configs
-└── results/                  # Test results
+CV_project/
+├── outputs/
+├── parameters/
+├── res/
+├── roweeder/
+├── scripts/
+├── weedmap_inference/
+├── LICENSE
+├── README.md
+├── app.py
+├── demo.py
+├── environment.yml
+├── main.py
+├── pyproject.toml
+├── requirements.txt
+└── visualize_weed.py
 ```
 
 ---
