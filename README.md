@@ -136,6 +136,26 @@ python main.py experiment --parameters=parameters/folds/flat.yaml
 
 ## Testing
 
+### Test on Agriculture Vision Test Set
+
+Test any model on the WeedMap test set:
+
+```bash
+# Test reproduced model
+python test_reproduced_av.py \
+  --checkpoint weedmap-inference/models/reproduced_roweeder/best_checkpoint.pth \
+  --data dataset/test/Rededge
+
+# Test finetuned model
+python test_finetuned_av.py \
+  --checkpoint models/phase1_finetuned/best_model.pth \
+  --data dataset/test/Rededge
+
+# Test baseline
+python test_baseline_av.py \
+  --data dataset/test/Rededge
+```
+
 ### Test on WeedMap Test Set
 
 Test any model on the WeedMap test set:
@@ -219,10 +239,11 @@ Access at: http://localhost:7860
 
 ### Impact of Input Channels
 
-| Channels | Dataset | F1 Score |
-|----------|---------|----------|
-| RGB | WeedMap | 37.5% |
-| RGB+NIR | Agriculture-Vision | 67.0% |
+| Model | F1 Score on AV | Training Dataset |
+|-------|------------------|------------------|
+| **Baseline RoWeeder** | 2.2% | HuggingFace pretrained |
+| **Phase 1 Finetuned** | 67.0% | Agriculture-Vision (7 classes) |
+| **Reproduced RoWeeder** | 15.3% | WeedMap pseudo-labels |
 
 **Note:** NIR helps on Agriculture-Vision but WeedMap baseline uses RGB only.
 
@@ -257,6 +278,8 @@ model.load_state_dict(checkpoint['model_state_dict'])
 
 ## Output Samples
 ![Output Samples](res/o1.png)
+![Output Samples](res/o2.png)
+![Output Samples](res/o3.png)
 
 ## Project Report
 
