@@ -17,15 +17,6 @@ This project reproduces and extends the RoWeeder framework for unsupervised weed
 3. **Comprehensive Evaluation** - Tested all models on WeedMap test set with detailed metrics
 4. **Web Application** - Built interactive Gradio app for real-time weed segmentation
 
-### Key Results
-
-| Model | F1 Score on WeedMap | Training Dataset |
-|-------|------------------|------------------|
-| **Baseline RoWeeder** | 37.5% | HuggingFace pretrained |
-| **Phase 1 Finetuned** | 65.2% | Agriculture-Vision (7 classes) |
-| **Reproduced RoWeeder** | 42.5% | WeedMap pseudo-labels |
----
-
 ## Installation
 
 ### Environment Setup
@@ -68,7 +59,7 @@ CV_project/
 
 ## Dataset Preparation
 
-### Reproduction on RedEdge Dataset
+### RedEdge Dataset
 
 Download and preprocess the WeedMap dataset:
 
@@ -123,7 +114,7 @@ python test_finetuned_weedmap.py
 - Test F1 on Agriculture Vision: 67.0%
 - Test F1 on WeedMap: 65.2% (after 7→3 class mapping)
 
-### Phase 2: RoWeeder Reproduction
+### RoWeeder Reproduction
 
 Train on WeedMap pseudo-labels (3 classes, RGB only):
 
@@ -139,12 +130,11 @@ python main.py experiment --parameters=parameters/folds/flat.yaml
 
 **Results:**
 - Best Fold Validation F1: 81.5% (Fold 5, Epoch 27)
-- Test F1: 72.5% (Fold 5)
 - Average across folds: ~74% F1
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ### Test on WeedMap Test Set
 
@@ -152,12 +142,12 @@ Test any model on the WeedMap test set:
 
 ```bash
 # Test reproduced model
-python test_reproduced_final.py \
+python test_reproduced_weedmap.py \
   --checkpoint weedmap-inference/models/reproduced_roweeder/best_checkpoint.pth \
   --data dataset/test/Rededge
 
-# Test Phase 1 model
-python test_phase1_weedmap.py \
+# Test finetuned model
+python test_finetuned_weedmap.py \
   --checkpoint models/phase1_finetuned/best_model.pth \
   --data dataset/test/Rededge
 
@@ -166,21 +156,7 @@ python test_baseline_weedmap.py \
   --data dataset/test/Rededge
 ```
 
-### Cross-Validation Results
-
-5-fold cross-validation on WeedMap (each fold tests on a different field):
-
-| Fold | Test Field | Validation F1 | Test F1 |
-|------|-----------|---------------|---------|
-| 1 | 000 | ~78% | TBD |
-| 2 | 001 | ~80% | TBD |
-| 3 | 002 | ~80% | TBD |
-| 4 | 003 | ~81% | TBD |
-| 5 | 004 | **81.5%** | **72.5%** |
-
----
-
-## 🎨 Web Application
+## Web Application
 
 ### Launch Gradio App
 
@@ -188,10 +164,10 @@ Interactive web interface for weed segmentation:
 
 ```bash
 cd weedmap-inference
-python app.py
+python app.py 
 ```
 
-Access at: http://localhost:7860
+Access at: http://localhost:7860 
 
 ### Features
 
@@ -209,35 +185,24 @@ Access at: http://localhost:7860
   - Class distribution statistics
   - Side-by-side model comparison
 
-### Deployment
-
-Deploy to HuggingFace Spaces:
-
-```bash
-# See weedmap-inference/DEPLOYMENT_GUIDE.txt
-```
-
 ---
 
-## 📈 Results Analysis
+## Results Analysis
 
-### Comparative Performance
+### On Weedmap
 
-```
-Model Performance on WeedMap Test Set:
-─────────────────────────────────────────────────────────
-Baseline RoWeeder:        27.9% F1  ❌ No fine-tuning
-Phase 1 Finetuned:        65.2% F1  ✅ Cross-domain
-Reproduced RoWeeder:      72.5% F1  ✅✅ Domain-specific
-Paper's Reported:         75.3% F1  🎯 Target
-─────────────────────────────────────────────────────────
-```
+| Model | F1 Score on WeedMap | Training Dataset |
+|-------|------------------|------------------|
+| **Baseline RoWeeder** | 37.5% | HuggingFace pretrained |
+| **Phase 1 Finetuned** | 65.2% | Agriculture-Vision (7 classes) |
+| **Reproduced RoWeeder** | 42.5% | WeedMap pseudo-labels |
+---
 
 ### Key Insights
 
-1. **Fine-tuning is Essential**: Baseline (28%) vs Reproduced (73%) shows 2.6× improvement
-2. **Domain Matters**: Domain-specific training (73%) outperforms cross-domain (65%) by 8 percentage points
-3. **Close to Paper**: Our reproduction (73%) achieves 97% of paper's performance (75%)
+1. **Fine-tuning is Essential**: Baseline (37.5%) vs Reproduced (42.5%) shows improvement
+2. **Domain Matters**: Domain-specific training outperforms cross-domain.
+3. **Close to Paper**: Our reproduction (42.5%) is closest to paper than the pretrained weights on WeedMap.
 4. **Class Imbalance**: Weed class remains challenging (F1 ~50%) compared to background (89%) and crop (82%)
 
 ### Per-Class Performance (Reproduced Model)
@@ -250,40 +215,28 @@ Paper's Reported:         75.3% F1  🎯 Target
 
 ---
 
-## 🔬 Ablation Studies
-
-### Impact of Training Data
-
-| Training Source | Classes | F1 on WeedMap |
-|----------------|---------|---------------|
-| None (Baseline) | 3 | 27.9% |
-| Agriculture-Vision | 7→3 | 65.2% |
-| WeedMap Pseudo-GT | 3 | 72.5% |
-
-**Conclusion:** Domain-specific pseudo-labels are crucial for high performance.
+##  Finetuning
 
 ### Impact of Input Channels
 
 | Channels | Dataset | F1 Score |
 |----------|---------|----------|
-| RGB | WeedMap | 72.5% |
+| RGB | WeedMap | 37.5% |
 | RGB+NIR | Agriculture-Vision | 67.0% |
 
 **Note:** NIR helps on Agriculture-Vision but WeedMap baseline uses RGB only.
 
 ---
 
-## 📂 Model Checkpoints
+## Model Checkpoints
 
 ### Download Our Trained Models
 
 - **Phase 1 Finetuned**: `models/phase1_finetuned/best_model.pth` (39.5 MB)
   - Trained on Agriculture-Vision (7 classes, RGB+NIR)
-  - Epoch 24, Validation F1: 67.0%
 
 - **Reproduced RoWeeder**: `models/reproduced_roweeder/best_checkpoint.pth` (14.5 MB)
   - Trained on WeedMap pseudo-labels (3 classes, RGB)
-  - Fold 5, Epoch 27, Validation F1: 81.5%
 
 ### Load Models for Inference
 
@@ -302,12 +255,15 @@ model.load_state_dict(checkpoint['model_state_dict'])
 
 ---
 
-## 📝 Project Report
+## Output Samples
+![Output Samples](res/o1.png)
+
+## Project Report
 
 ### Challenges Faced
 
 1. **PyTorch Version Compatibility**: Resolved `weights_only` parameter issues with PyTorch 2.6
-2. **Model Architecture Matching**: Ensured Phase 1 model architecture matches training script
+2. **Model Architecture Matching**: Ensured model architecture matches training script
 3. **Class Mapping**: Correctly mapped 7 Agriculture-Vision classes to 3 WeedMap classes
 4. **Dataset Structure**: Debugged WeedMap tile filename patterns and image resizing
 
@@ -327,7 +283,7 @@ model.load_state_dict(checkpoint['model_state_dict'])
 
 ---
 
-## 🎓 Academic Context
+## Academic Context
 
 ### Original Paper
 
@@ -347,38 +303,16 @@ This project builds upon:
 ### Datasets Used
 
 - **WeedMap Dataset**: Sugar beet fields with crop-row annotations
-  - Citation: [WeedMap Paper]
   - Download: http://robotics.ethz.ch/~asl-datasets/2018-weedMap-dataset-release/
 
 - **Agriculture-Vision Dataset**: Multi-crop aerial imagery
-  - Citation: [Agriculture-Vision Challenge]
   - Download: https://www.agriculture-vision.com/
 
 ---
 
-## 👥 Team & Contributions
-
-**Course:** Computer Vision - Fall 2025  
-**Instructor:** [Instructor Name]
-
-**Team Members:**
-- [Your Name] - Model training, evaluation, documentation
-- [Team Member 2] - Dataset preprocessing, web application
-- [Team Member 3] - Testing, visualization, deployment
-
----
-
-## 📜 License
+## License
 
 This project uses code from the original RoWeeder implementation (Apache 2.0 License).
 Our extensions and modifications are provided for educational purposes.
 
----
-
-## 🙏 Acknowledgments
-
-- Original RoWeeder authors for open-sourcing their implementation
-- WeedMap and Agriculture-Vision dataset creators
-- HuggingFace for model hosting infrastructure
-- Course instructors and TAs for guidance
 ---
